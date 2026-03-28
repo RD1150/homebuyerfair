@@ -43,39 +43,43 @@
 }
 
 :root {
-  --primary: var(--color-blue-700);
-  --primary-foreground: var(--color-blue-50);
-  --sidebar-primary: var(--color-blue-600);
-  --sidebar-primary-foreground: var(--color-blue-50);
-  --chart-1: var(--color-blue-300);
-  --chart-2: var(--color-blue-500);
-  --chart-3: var(--color-blue-600);
-  --chart-4: var(--color-blue-700);
-  --chart-5: var(--color-blue-800);
   --radius: 0.65rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.235 0.015 65);
+  /* Elegant navy + gold palette */
+  --background: oklch(0.985 0.004 240);
+  --foreground: oklch(0.18 0.03 248);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.235 0.015 65);
+  --card-foreground: oklch(0.18 0.03 248);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.235 0.015 65);
-  --secondary: oklch(0.98 0.001 286.375);
-  --secondary-foreground: oklch(0.4 0.015 65);
-  --muted: oklch(0.967 0.001 286.375);
-  --muted-foreground: oklch(0.552 0.016 285.938);
-  --accent: oklch(0.967 0.001 286.375);
-  --accent-foreground: oklch(0.141 0.005 285.823);
+  --popover-foreground: oklch(0.18 0.03 248);
+  /* Deep navy primary */
+  --primary: oklch(0.30 0.09 248);
+  --primary-foreground: oklch(0.97 0.005 240);
+  /* Soft secondary */
+  --secondary: oklch(0.94 0.012 240);
+  --secondary-foreground: oklch(0.30 0.09 248);
+  --muted: oklch(0.95 0.008 240);
+  --muted-foreground: oklch(0.50 0.025 240);
+  /* Gold accent */
+  --accent: oklch(0.78 0.13 75);
+  --accent-foreground: oklch(0.18 0.03 248);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
-  --ring: oklch(0.623 0.214 259.815);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.235 0.015 65);
-  --sidebar-accent: oklch(0.967 0.001 286.375);
-  --sidebar-accent-foreground: oklch(0.141 0.005 285.823);
-  --sidebar-border: oklch(0.92 0.004 286.32);
-  --sidebar-ring: oklch(0.623 0.214 259.815);
+  --border: oklch(0.88 0.012 240);
+  --input: oklch(0.88 0.012 240);
+  --ring: oklch(0.30 0.09 248);
+  --chart-1: oklch(0.30 0.09 248);
+  --chart-2: oklch(0.78 0.13 75);
+  --chart-3: oklch(0.55 0.08 200);
+  --chart-4: oklch(0.65 0.10 140);
+  --chart-5: oklch(0.60 0.12 30);
+  --sidebar: oklch(0.22 0.07 248);
+  --sidebar-foreground: oklch(0.92 0.01 240);
+  --sidebar-primary: oklch(0.78 0.13 75);
+  --sidebar-primary-foreground: oklch(0.18 0.03 248);
+  --sidebar-accent: oklch(0.28 0.07 248);
+  --sidebar-accent-foreground: oklch(0.92 0.01 240);
+  --sidebar-border: oklch(0.28 0.07 248);
+  --sidebar-ring: oklch(0.78 0.13 75);
 }
 
 .dark {
@@ -119,6 +123,7 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
@@ -174,4 +179,60 @@
       max-width: 1280px; /* Standard content width */
     }
   }
+}
+/* ===== Event Site Custom Utilities ===== */
+
+/* Hero gradient - deep navy */
+.hero-gradient {
+  background: linear-gradient(150deg, oklch(0.20 0.09 252) 0%, oklch(0.27 0.10 248) 45%, oklch(0.24 0.08 258) 100%);
+}
+
+/* Gold shimmer text */
+.gold-text {
+  background: linear-gradient(135deg, oklch(0.85 0.14 78) 0%, oklch(0.72 0.17 65) 50%, oklch(0.88 0.12 82) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Subtle section background */
+.section-alt {
+  background: linear-gradient(180deg, oklch(0.97 0.006 240) 0%, oklch(0.985 0.004 240) 100%);
+}
+
+/* Feature card hover lift */
+.feature-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 48px oklch(0.20 0.09 252 / 0.14);
+}
+
+/* Scroll fade-in animation */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fadeInUp 0.65s ease forwards;
+}
+.animate-fade-in-up-delay-1 { animation: fadeInUp 0.65s 0.1s ease both; }
+.animate-fade-in-up-delay-2 { animation: fadeInUp 0.65s 0.2s ease both; }
+.animate-fade-in-up-delay-3 { animation: fadeInUp 0.65s 0.3s ease both; }
+.animate-fade-in-up-delay-4 { animation: fadeInUp 0.65s 0.4s ease both; }
+
+/* Gold divider line */
+.gold-divider {
+  height: 3px;
+  background: linear-gradient(90deg, transparent, oklch(0.78 0.13 75), transparent);
+  border: none;
+}
+
+/* Checkmark list */
+.check-list li::before {
+  content: "✓";
+  color: oklch(0.78 0.13 75);
+  font-weight: 700;
+  margin-right: 0.5rem;
 }
