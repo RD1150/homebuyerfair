@@ -325,7 +325,7 @@ export default function Home() {
               </p>
             </div>
 
-              /* ── GOOGLE FORM EMBED ── */
+              {/* ── GOOGLE FORM EMBED ── */}
               <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
                 <iframe
                   src="https://docs.google.com/forms/d/e/1FAIpQLSfLCJ2-TBQ7jUhQRLmtMZbvkZtDGw-U8z-TwcOe03oeqyHOEQ/viewform?embedded=true"
