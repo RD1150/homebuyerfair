@@ -48,7 +48,7 @@ export default function Home() {
     { icon: DollarSign, text: "How to qualify for up to $58,000 in assistance" },
     { icon: TrendingUp, text: "Credit tips to boost your buying power" },
     { icon: Shield, text: "Loan options & financing strategies" },
-    { icon: Home, text: "How to avoid costly first-time buyer mistakes" },
+    { icon: HomeIcon, text: "How to avoid costly first-time buyer mistakes" },
   ];
 
   return (
