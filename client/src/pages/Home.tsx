@@ -357,10 +357,19 @@ export default function Home() {
                   className="h-12 w-auto object-contain brightness-0 invert"
                 />
               </div>
-              <p className="text-white/60 text-sm leading-relaxed">
-                Conejo Simi Moorpark Association of REALTORS®<br />
-                Empowering first-time homebuyers since day one.
+              <p className="text-white/80 text-sm font-semibold mb-2">
+                Conejo Simi Moorpark Association of REALTORS®
               </p>
+              <div className="space-y-1.5 text-sm text-white/60">
+                <p className="flex items-start gap-2">
+                  <MapPin className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
+                  <span>463 Pennsfield Pl Suite 100<br />Thousand Oaks, CA 91360</span>
+                </p>
+                <p className="flex items-center gap-2">
+                  <Phone className="w-4 h-4 text-amber-400 shrink-0" />
+                  <a href="tel:+18054954754" className="hover:text-amber-400 transition-colors">(805) 495-4754</a>
+                </p>
+              </div>
             </div>
             <div>
               <h4 className="font-semibold text-white mb-4">Event Details</h4>
