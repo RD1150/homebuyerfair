@@ -376,7 +376,10 @@ export default function Home() {
               <div className="space-y-2 text-sm text-white/60">
                 <p className="flex items-center gap-2"><Calendar className="w-4 h-4 text-amber-400" /> Saturday, April 25, 2026</p>
                 <p className="flex items-center gap-2"><Clock className="w-4 h-4 text-amber-400" /> 11:00 AM – 1:30 PM</p>
-                <p className="flex items-center gap-2"><MapPin className="w-4 h-4 text-amber-400" /> Simi Valley, CA 93065</p>
+                <p className="flex items-start gap-2">
+                  <MapPin className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
+                  <span>Valor Home Finance<br />1555 Simi Town Center Way #640<br />Simi Valley, CA 93065</span>
+                </p>
               </div>
             </div>
             <div>
