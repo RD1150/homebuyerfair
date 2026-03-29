@@ -1,31 +1,11 @@
 import { useState, useEffect, useRef } from "react";
-import { trpc } from "@/lib/trpc";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { toast } from "sonner";
 import {
   MapPin, Calendar, Clock, Users, ChevronDown,
   CheckCircle2, Star, Home as HomeIcon, DollarSign, Utensils,
   Music, Palette, Baby, Phone, Mail, ArrowRight,
   Award, BookOpen, TrendingUp, Shield
 } from "lucide-react";
-
-const registrationSchema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  email: z.string().email("Please enter a valid email"),
-  phone: z.string().min(7, "Phone number is required"),
-  adultsCount: z.number().int().min(1, "At least 1 adult required").max(20),
-  childrenCount: z.number().int().min(0).max(20),
-  notes: z.string().max(500).optional(),
-});
-
-type RegistrationForm = z.infer<typeof registrationSchema>;
 
 function useIntersectionObserver(threshold = 0.15) {
   const ref = useRef<HTMLDivElement>(null);
@@ -43,31 +23,7 @@ function useIntersectionObserver(threshold = 0.15) {
 }
 
 export default function Home() {
-  const [registered, setRegistered] = useState(false);
-  const [submittedName, setSubmittedName] = useState("");
   const registrationRef = useRef<HTMLDivElement>(null);
-
-  const { data: countData } = trpc.registration.count.useQuery();
-
-  const submitMutation = trpc.registration.submit.useMutation({
-    onSuccess: () => {
-      setRegistered(true);
-      toast.success("You're registered! See you April 25th!");
-    },
-    onError: (err) => {
-      toast.error(err.message || "Registration failed. Please try again.");
-    },
-  });
-
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<RegistrationForm>({
-    resolver: zodResolver(registrationSchema),
-    defaultValues: { adultsCount: 1, childrenCount: 0 },
-  });
-
-  const onSubmit = (data: RegistrationForm) => {
-    setSubmittedName(data.firstName);
-    submitMutation.mutate(data);
-  };
 
   const scrollToRegister = () => {
     registrationRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -184,12 +140,7 @@ export default function Home() {
             </Button>
           </div>
 
-          {/* Seats counter */}
-          {countData && countData.count > 0 && (
-            <p className={`mt-8 text-white/50 text-sm ${heroSection.visible ? "animate-fade-in-up-delay-4" : "opacity-0"}`}>
-              🎉 {countData.count} {countData.count === 1 ? "person has" : "people have"} already registered
-            </p>
-          )}
+
         </div>
 
         {/* Scroll indicator */}
@@ -374,157 +325,21 @@ export default function Home() {
               </p>
             </div>
 
-            {registered ? (
-              /* ── SUCCESS STATE ── */
-              <div className="bg-white rounded-3xl p-10 text-center shadow-2xl">
-                <div className="w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-6">
-                  <CheckCircle2 className="w-10 h-10 text-emerald-600" />
-                </div>
-                <h3 className="text-3xl font-bold text-primary mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
-                  You're Registered, {submittedName}!
-                </h3>
-                <p className="text-muted-foreground text-lg mb-6">
-                  We're excited to see you at the 4th Annual Homebuyer Extravaganza!
-                </p>
-                <div className="bg-primary/5 rounded-2xl p-6 text-left space-y-3 mb-8">
-                  <div className="flex items-center gap-3">
-                    <Calendar className="w-5 h-5 text-primary flex-shrink-0" />
-                    <span className="font-semibold text-foreground">Saturday, April 25, 2026 · 11:00 AM – 1:30 PM</span>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <MapPin className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                    <span className="text-foreground">Valor Home Finance · 1555 Simi Town Center Way #640, Simi Valley, CA 93065</span>
-                  </div>
-                </div>
-                <p className="text-muted-foreground text-sm">
-                  A confirmation has been noted. We look forward to seeing you there!
-                </p>
-                <Button
-                  onClick={() => { setRegistered(false); reset(); }}
-                  variant="outline"
-                  className="mt-6 border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+              /* ── GOOGLE FORM EMBED ── */
+              <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
+                <iframe
+                  src="https://docs.google.com/forms/d/e/1FAIpQLSfLCJ2-TBQ7jUhQRLmtMZbvkZtDGw-U8z-TwcOe03oeqyHOEQ/viewform?embedded=true"
+                  width="100%"
+                  height="820"
+                  frameBorder="0"
+                  marginHeight={0}
+                  marginWidth={0}
+                  title="Event Registration Form"
+                  className="block"
                 >
-                  Register Another Attendee
-                </Button>
+                  Loading registration form…
+                </iframe>
               </div>
-            ) : (
-              /* ── FORM ── */
-              <div className="bg-white rounded-3xl p-8 sm:p-10 shadow-2xl">
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                  <div className="grid sm:grid-cols-2 gap-5">
-                    <div className="space-y-2">
-                      <Label htmlFor="firstName" className="text-foreground font-semibold">First Name <span className="text-destructive">*</span></Label>
-                      <Input
-                        id="firstName"
-                        placeholder="Jane"
-                        {...register("firstName")}
-                        className={`h-12 rounded-xl ${errors.firstName ? "border-destructive" : ""}`}
-                      />
-                      {errors.firstName && <p className="text-destructive text-xs">{errors.firstName.message}</p>}
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="lastName" className="text-foreground font-semibold">Last Name <span className="text-destructive">*</span></Label>
-                      <Input
-                        id="lastName"
-                        placeholder="Smith"
-                        {...register("lastName")}
-                        className={`h-12 rounded-xl ${errors.lastName ? "border-destructive" : ""}`}
-                      />
-                      {errors.lastName && <p className="text-destructive text-xs">{errors.lastName.message}</p>}
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="email" className="text-foreground font-semibold">Email Address <span className="text-destructive">*</span></Label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                      <Input
-                        id="email"
-                        type="email"
-                        placeholder="jane@example.com"
-                        {...register("email")}
-                        className={`h-12 rounded-xl pl-10 ${errors.email ? "border-destructive" : ""}`}
-                      />
-                    </div>
-                    {errors.email && <p className="text-destructive text-xs">{errors.email.message}</p>}
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="phone" className="text-foreground font-semibold">Phone Number <span className="text-destructive">*</span></Label>
-                    <div className="relative">
-                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                      <Input
-                        id="phone"
-                        type="tel"
-                        placeholder="(805) 555-0123"
-                        {...register("phone")}
-                        className={`h-12 rounded-xl pl-10 ${errors.phone ? "border-destructive" : ""}`}
-                      />
-                    </div>
-                    {errors.phone && <p className="text-destructive text-xs">{errors.phone.message}</p>}
-                  </div>
-
-                  <div className="grid sm:grid-cols-2 gap-5">
-                    <div className="space-y-2">
-                      <Label htmlFor="adultsCount" className="text-foreground font-semibold">Number of Adults <span className="text-destructive">*</span></Label>
-                      <Input
-                        id="adultsCount"
-                        type="number"
-                        min={1}
-                        max={20}
-                        {...register("adultsCount")}
-                        className={`h-12 rounded-xl ${errors.adultsCount ? "border-destructive" : ""}`}
-                      />
-                      {errors.adultsCount && <p className="text-destructive text-xs">{errors.adultsCount.message}</p>}
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="childrenCount" className="text-foreground font-semibold">Number of Children</Label>
-                      <Input
-                        id="childrenCount"
-                        type="number"
-                        min={0}
-                        max={20}
-                        {...register("childrenCount")}
-                        className="h-12 rounded-xl"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="notes" className="text-foreground font-semibold">Notes <span className="text-muted-foreground font-normal">(optional)</span></Label>
-                    <Textarea
-                      id="notes"
-                      placeholder="Any questions or special accommodations?"
-                      rows={3}
-                      {...register("notes")}
-                      className="rounded-xl resize-none"
-                    />
-                  </div>
-
-                  <Button
-                    type="submit"
-                    disabled={submitMutation.isPending}
-                    className="w-full h-14 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-lg rounded-xl shadow-lg transition-all duration-300 hover:scale-[1.02]"
-                  >
-                    {submitMutation.isPending ? (
-                      <span className="flex items-center gap-2">
-                        <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        Registering...
-                      </span>
-                    ) : (
-                      <span className="flex items-center gap-2">
-                        Reserve My FREE Spot
-                        <ArrowRight className="w-5 h-5" />
-                      </span>
-                    )}
-                  </Button>
-
-                  <p className="text-center text-muted-foreground text-xs">
-                    By registering, you agree to receive event-related communications. This event is 100% free.
-                  </p>
-                </form>
-              </div>
-            )}
           </div>
         </div>
       </section>
