@@ -1,6 +1,7 @@
-import { desc, eq } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, InsertRegistration, registrations, users } from "../drizzle/schema";
+import { eq } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
+import { InsertUser, InsertRegistration, users, registrations } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -8,7 +9,11 @@ let _db: ReturnType<typeof drizzle> | null = null;
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
     try {
-      _db = drizzle(process.env.DATABASE_URL);
+      const pool = new Pool({
+        connectionString: process.env.DATABASE_URL,
+        ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
+      });
+      _db = drizzle(pool);
     } catch (error) {
       console.warn("[Database] Failed to connect:", error);
       _db = null;
@@ -29,7 +34,9 @@ export async function upsertUser(user: InsertUser): Promise<void> {
   }
 
   try {
-    const values: InsertUser = { openId: user.openId };
+    const values: InsertUser = {
+      openId: user.openId,
+    };
     const updateSet: Record<string, unknown> = {};
 
     const textFields = ["name", "email", "loginMethod"] as const;
@@ -57,10 +64,18 @@ export async function upsertUser(user: InsertUser): Promise<void> {
       updateSet.role = 'admin';
     }
 
-    if (!values.lastSignedIn) values.lastSignedIn = new Date();
-    if (Object.keys(updateSet).length === 0) updateSet.lastSignedIn = new Date();
+    if (!values.lastSignedIn) {
+      values.lastSignedIn = new Date();
+    }
 
-    await db.insert(users).values(values).onDuplicateKeyUpdate({ set: updateSet });
+    if (Object.keys(updateSet).length === 0) {
+      updateSet.lastSignedIn = new Date();
+    }
+
+    await db.insert(users).values(values).onConflictDoUpdate({
+      target: users.openId,
+      set: updateSet,
+    });
   } catch (error) {
     console.error("[Database] Failed to upsert user:", error);
     throw error;
@@ -69,28 +84,31 @@ export async function upsertUser(user: InsertUser): Promise<void> {
 
 export async function getUserByOpenId(openId: string) {
   const db = await getDb();
-  if (!db) return undefined;
+  if (!db) {
+    console.warn("[Database] Cannot get user: database not available");
+    return undefined;
+  }
+
   const result = await db.select().from(users).where(eq(users.openId, openId)).limit(1);
   return result.length > 0 ? result[0] : undefined;
 }
 
-// Registration helpers
 export async function createRegistration(data: InsertRegistration) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  const result = await db.insert(registrations).values(data);
-  return result;
+  const result = await db.insert(registrations).values(data).returning({ id: registrations.id });
+  return result[0];
 }
 
 export async function getAllRegistrations() {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  return db.select().from(registrations).orderBy(desc(registrations.createdAt));
+  return db.select().from(registrations).orderBy(registrations.createdAt);
 }
 
 export async function getRegistrationCount() {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
-  const rows = await db.select().from(registrations);
-  return rows.length;
+  const result = await db.select().from(registrations);
+  return result.length;
 }

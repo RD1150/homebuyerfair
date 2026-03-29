@@ -27,3 +27,13 @@
 - [x] Form validation with error messages
 - [x] Loading states and toast notifications
 - [x] Write vitest tests for registration procedures
+
+## Render Deployment
+- [ ] Install pg / drizzle-orm postgres adapter, remove mysql2
+- [ ] Update drizzle/schema.ts to use PostgreSQL types
+- [ ] Update drizzle.config.ts to use postgres dialect
+- [ ] Update server/db.ts to use postgres driver
+- [ ] Update server/_core env references for DATABASE_URL
+- [ ] Generate new migration SQL for postgres
+- [ ] Add render.yaml Blueprint config
+- [ ] Push all changes to GitHub RD1150/homebuyerfair
