@@ -58,13 +58,14 @@ export default function Home() {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-border shadow-sm">
         <div className="container flex items-center justify-between h-16">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-              <HomeIcon className="w-4 h-4 text-primary-foreground" />
-            </div>
+            <img
+              src="https://d2xsxph8kpxj0f.cloudfront.net/310419663026756998/H3QgVNquTjWvKa2WsULMBM/csmar-logo_d24f2566.png"
+              alt="CSMAR - Conejo Simi Moorpark Association of REALTORS"
+              className="h-10 w-auto object-contain"
+            />
             <span className="font-semibold text-primary text-sm hidden sm:block">
               Conejo Simi Moorpark Association of REALTORS®
             </span>
-            <span className="font-semibold text-primary text-sm sm:hidden">CSMAR®</span>
           </div>
           <Button onClick={scrollToRegister} size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-5">
             Reserve My Spot
@@ -349,11 +350,12 @@ export default function Home() {
         <div className="container">
           <div className="grid md:grid-cols-3 gap-8 mb-8">
             <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center">
-                <HomeIcon className="w-4 h-4 text-white" />
-                </div>
-                <span className="font-bold text-white">CSMAR®</span>
+              <div className="flex items-center gap-3 mb-4">
+                <img
+                  src="https://d2xsxph8kpxj0f.cloudfront.net/310419663026756998/H3QgVNquTjWvKa2WsULMBM/csmar-logo_d24f2566.png"
+                  alt="CSMAR"
+                  className="h-12 w-auto object-contain brightness-0 invert"
+                />
               </div>
               <p className="text-white/60 text-sm leading-relaxed">
                 Conejo Simi Moorpark Association of REALTORS®<br />
