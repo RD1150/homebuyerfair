@@ -29,11 +29,18 @@
 - [x] Write vitest tests for registration procedures
 
 ## Render Deployment
-- [ ] Install pg / drizzle-orm postgres adapter, remove mysql2
-- [ ] Update drizzle/schema.ts to use PostgreSQL types
-- [ ] Update drizzle.config.ts to use postgres dialect
-- [ ] Update server/db.ts to use postgres driver
-- [ ] Update server/_core env references for DATABASE_URL
-- [ ] Generate new migration SQL for postgres
-- [ ] Add render.yaml Blueprint config
-- [ ] Push all changes to GitHub RD1150/homebuyerfair
+- [x] Install pg / drizzle-orm postgres adapter, remove mysql2
+- [x] Update drizzle/schema.ts to use PostgreSQL types
+- [x] Update drizzle.config.ts to use postgres dialect
+- [x] Update server/db.ts to use postgres driver
+- [x] Update server/_core env references for DATABASE_URL
+- [x] Generate new migration SQL for postgres
+- [x] Add render.yaml Blueprint config
+- [x] Push all changes to GitHub RD1150/homebuyerfair
+
+## Admin Password Auth (Render-compatible)
+- [ ] Add admin.login and admin.logout tRPC procedures with password check
+- [ ] Store admin session in a signed JWT cookie (no Manus OAuth dependency)
+- [ ] Update Admin.tsx to show password login form instead of Manus OAuth
+- [ ] Add ADMIN_PASSWORD env var to render.yaml
+- [ ] Push to GitHub

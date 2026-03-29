@@ -1,29 +1,126 @@
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
-import { useAuth } from "@/_core/hooks/useAuth";
-import { getLoginUrl } from "@/const";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import {
   Users, Download, Search, ArrowUpDown, ArrowUp, ArrowDown,
-  Calendar, Mail, Phone, Baby, LogIn, Shield, Home as HomeIcon,
-  RefreshCw
+  Calendar, Mail, Phone, Baby, Shield, Home as HomeIcon,
+  RefreshCw, Lock, Eye, EyeOff, LogOut
 } from "lucide-react";
 import { Link } from "wouter";
 
 type SortField = "createdAt" | "firstName" | "lastName" | "adultsCount" | "childrenCount";
 type SortDir = "asc" | "desc";
 
+function LoginForm({ onSuccess }: { onSuccess: () => void }) {
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+
+  const loginMutation = trpc.admin.login.useMutation({
+    onSuccess: () => {
+      toast.success("Welcome to the admin dashboard!");
+      onSuccess();
+    },
+    onError: (err) => {
+      setError(err.message || "Incorrect password. Please try again.");
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    if (!password.trim()) {
+      setError("Please enter the admin password.");
+      return;
+    }
+    loginMutation.mutate({ password });
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800 px-4">
+      <div className="w-full max-w-sm">
+        <div className="bg-white rounded-3xl shadow-2xl p-8">
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+              <Shield className="w-8 h-8 text-primary" />
+            </div>
+            <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: "'Playfair Display', serif" }}>
+              Admin Access
+            </h1>
+            <p className="text-muted-foreground text-sm mt-1">Homebuyer Extravaganza Dashboard</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="relative">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                type={showPassword ? "text" : "password"}
+                placeholder="Admin password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                className="pl-10 pr-10 h-12 rounded-xl"
+                autoFocus
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(v => !v)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+
+            {error && (
+              <p className="text-destructive text-sm text-center">{error}</p>
+            )}
+
+            <Button
+              type="submit"
+              className="w-full h-12 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+              disabled={loginMutation.isPending}
+            >
+              {loginMutation.isPending ? (
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                "Sign In"
+              )}
+            </Button>
+          </form>
+
+          <div className="mt-6 text-center">
+            <Link href="/" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+              ← Back to Event Page
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Admin() {
-  const { user, loading, isAuthenticated } = useAuth();
   const [search, setSearch] = useState("");
   const [sortField, setSortField] = useState<SortField>("createdAt");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
 
+  const utils = trpc.useUtils();
+
+  const { data: sessionData, isLoading: sessionLoading, refetch: refetchSession } = trpc.admin.checkSession.useQuery();
+  const isAuthenticated = sessionData?.authenticated === true;
+
+  const logoutMutation = trpc.admin.logout.useMutation({
+    onSuccess: () => {
+      utils.admin.checkSession.invalidate();
+      utils.admin.listRegistrations.invalidate();
+      toast.success("Logged out successfully.");
+    },
+  });
+
   const { data: registrations, isLoading, refetch } = trpc.admin.listRegistrations.useQuery(undefined, {
-    enabled: isAuthenticated && user?.role === "admin",
+    enabled: isAuthenticated,
     retry: false,
   });
 
@@ -94,8 +191,7 @@ export default function Admin() {
   const totalAdults = (registrations ?? []).reduce((s, r) => s + r.adultsCount, 0);
   const totalChildren = (registrations ?? []).reduce((s, r) => s + r.childrenCount, 0);
 
-  // Loading state
-  if (loading) {
+  if (sessionLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
@@ -103,44 +199,8 @@ export default function Admin() {
     );
   }
 
-  // Not logged in
   if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background px-4">
-        <div className="max-w-sm w-full text-center">
-          <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6">
-            <Shield className="w-8 h-8 text-primary" />
-          </div>
-          <h1 className="text-2xl font-bold text-foreground mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Admin Access</h1>
-          <p className="text-muted-foreground mb-6">Please sign in to access the admin dashboard.</p>
-          <Button asChild className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
-            <a href={getLoginUrl()}>
-              <LogIn className="w-4 h-4 mr-2" />
-              Sign In
-            </a>
-          </Button>
-          <Link href="/" className="block mt-4 text-sm text-muted-foreground hover:text-primary transition-colors">
-            ← Back to Event Page
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  // Not admin
-  if (user?.role !== "admin") {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background px-4">
-        <div className="max-w-sm w-full text-center">
-          <div className="w-16 h-16 rounded-2xl bg-destructive/10 flex items-center justify-center mx-auto mb-6">
-            <Shield className="w-8 h-8 text-destructive" />
-          </div>
-          <h1 className="text-2xl font-bold text-foreground mb-2">Access Denied</h1>
-          <p className="text-muted-foreground mb-6">You need admin privileges to view this page.</p>
-          <Link href="/" className="text-sm text-primary hover:underline">← Back to Event Page</Link>
-        </div>
-      </div>
-    );
+    return <LoginForm onSuccess={() => refetchSession()} />;
   }
 
   return (
@@ -165,6 +225,15 @@ export default function Admin() {
             <Button size="sm" onClick={exportCSV} className="bg-primary hover:bg-primary/90 text-primary-foreground gap-1.5">
               <Download className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Export CSV</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => logoutMutation.mutate()}
+              className="gap-1.5 text-muted-foreground"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Logout</span>
             </Button>
             <Link href="/" className="text-xs text-muted-foreground hover:text-primary transition-colors hidden sm:block">
               View Event Page →
