@@ -368,7 +368,7 @@ export default function Home() {
                 </p>
                 <p className="flex items-center gap-2">
                   <Phone className="w-4 h-4 text-amber-400 shrink-0" />
-                  <a href="tel:+18054954754" className="hover:text-amber-400 transition-colors">(805) 495-4754</a>
+                  <a href="tel:+18054954681" className="hover:text-amber-400 transition-colors">(805) 495-4681</a>
                 </p>
               </div>
             </div>
