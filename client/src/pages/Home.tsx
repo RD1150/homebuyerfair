@@ -350,20 +350,21 @@ export default function Home() {
         <div className="container">
           <div className="grid md:grid-cols-3 gap-8 mb-8">
             <div>
-              <div className="flex items-center gap-3 mb-4">
+              <div className="flex items-center gap-3 mb-3">
                 <img
                   src="https://d2xsxph8kpxj0f.cloudfront.net/310419663026756998/H3QgVNquTjWvKa2WsULMBM/csmar-logo_d24f2566.png"
                   alt="CSMAR"
                   className="h-12 w-auto object-contain brightness-0 invert"
                 />
               </div>
-              <p className="text-white/80 text-sm font-semibold mb-2">
+              <p className="text-amber-400 text-xs font-semibold uppercase tracking-wider mb-1">Website Owner</p>
+              <p className="text-white text-sm font-semibold mb-3">
                 Conejo Simi Moorpark Association of REALTORS®
               </p>
               <div className="space-y-1.5 text-sm text-white/60">
                 <p className="flex items-start gap-2">
                   <MapPin className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
-                  <span>463 Pennsfield Pl Suite 100<br />Thousand Oaks, CA 91360</span>
+                  <span>463 Pennsfield Place, Suite 100<br />Thousand Oaks, CA 91360</span>
                 </p>
                 <p className="flex items-center gap-2">
                   <Phone className="w-4 h-4 text-amber-400 shrink-0" />
