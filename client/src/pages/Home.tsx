@@ -351,11 +351,13 @@ export default function Home() {
           <div className="grid md:grid-cols-3 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-3 mb-3">
-                <img
-                  src="https://d2xsxph8kpxj0f.cloudfront.net/310419663026756998/H3QgVNquTjWvKa2WsULMBM/csmar-logo_d24f2566.png"
-                  alt="CSMAR"
-                  className="h-12 w-auto object-contain brightness-0 invert"
-                />
+                <div className="bg-white rounded-lg p-1.5 inline-flex">
+                  <img
+                    src="https://d2xsxph8kpxj0f.cloudfront.net/310419663026756998/H3QgVNquTjWvKa2WsULMBM/csmar-logo_8d278d9f.png"
+                    alt="CSMAR Logo"
+                    className="h-12 w-auto object-contain"
+                  />
+                </div>
               </div>
               <p className="text-amber-400 text-xs font-semibold uppercase tracking-wider mb-1">Website Owner</p>
               <p className="text-white text-sm font-semibold mb-3">
