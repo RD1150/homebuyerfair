@@ -370,6 +370,10 @@ export default function Home() {
                   <Phone className="w-4 h-4 text-amber-400 shrink-0" />
                   <a href="tel:+18054954681" className="hover:text-amber-400 transition-colors">(805) 495-4681</a>
                 </p>
+                <p className="flex items-center gap-2">
+                  <Mail className="w-4 h-4 text-amber-400 shrink-0" />
+                  <a href="mailto:info@csmaor.com" className="hover:text-amber-400 transition-colors">info@csmaor.com</a>
+                </p>
               </div>
             </div>
             <div>
